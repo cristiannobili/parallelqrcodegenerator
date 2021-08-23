@@ -30,7 +30,8 @@ public class QrCodeGenerator {
         BufferedImage image;
 		try {
 			image = this.generateQRCodeImage(text);
-            this.fileStorageService.saveFile(image, "miofile.jpg");
+            String filename = HashGenerator.hash(text);
+            this.fileStorageService.saveFile(image, filename+".jpg");
 		} catch(Exception e) {
 
 		}
