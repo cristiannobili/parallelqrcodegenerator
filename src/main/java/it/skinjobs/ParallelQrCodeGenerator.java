@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import it.skinjobs.main.*;
 import it.skinjobs.utils.FileStorageProperties;
@@ -16,8 +17,11 @@ import it.skinjobs.main.NamesContainer;
 @EnableConfigurationProperties({ FileStorageProperties.class})
 public class ParallelQrCodeGenerator implements CommandLineRunner{
 
+	// @Autowired
+	// ThreadContainer threadContainer;
+
 	@Autowired
-	Generator generator;
+	ThreadPoolExecutor threadPoolExecutor;
 
 	@Autowired
 	NamesContainer names;
@@ -29,7 +33,10 @@ public class ParallelQrCodeGenerator implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		this.names.init();
-		this.generator.generate();
+		this.threadPoolExecutor.runner();
+		//this.threadContainer.runner();   ***
+		
+		//this.generator.generate();
 
 		//prototype.generateCode("ciao sono Jessica");
 	} 
