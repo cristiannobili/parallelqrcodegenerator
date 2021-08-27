@@ -17,11 +17,8 @@ import it.skinjobs.main.NamesContainer;
 @EnableConfigurationProperties({ FileStorageProperties.class})
 public class ParallelQrCodeGenerator implements CommandLineRunner{
 
-	// @Autowired
-	// ThreadContainer threadContainer;
-
 	@Autowired
-	ThreadPoolExecutor threadPoolExecutor;
+	ThreadContainer threadContainer;
 
 	@Autowired
 	NamesContainer names;
@@ -33,12 +30,7 @@ public class ParallelQrCodeGenerator implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		this.names.init();
-		this.threadPoolExecutor.runner();
-		//this.threadContainer.runner();   ***
-		
-		//this.generator.generate();
-
-		//prototype.generateCode("ciao sono Jessica");
+		this.threadContainer.runner();
 	} 
 
 }
