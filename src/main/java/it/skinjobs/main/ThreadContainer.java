@@ -6,33 +6,41 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThreadContainer implements ThreadDelegate{
 
-    private static final int NUM_THREAD = 10;
+    private static final int NUM_THREADS = 10;
     private static final int TOTAL = 1000;
-    private int actual;
+    private int countTaskDone;
     private  int activeThreads;
 
     @Autowired
 	Generator generator;
 
+    private void createThread() {
+        GeneratorThread runnable = new GeneratorThread();
+        this.activeThreads++;
+        runnable.setGenerator(generator);
+        runnable.setDelegate(this);
+        System.out.println("Thread started, actual: " + this.countTaskDone + " - numThread: " + this.activeThreads);
+        //runnable.run();
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
+
     public void runner() throws Exception{
-        this.actual = 0;
+        this.countTaskDone = 0;
         this.activeThreads = 0;
-        for(int i = 0; i < NUM_THREAD; i++) {
-                GeneratorThread thread = new GeneratorThread();
-                this.activeThreads++;
-                thread.setGenerator(generator);
-                thread.setDelegate(this);
-                thread.run();
-                System.out.println("Thread started, actual: " + this.actual + " - numThread: " + this.activeThreads);
+        while ( this.activeThreads < NUM_THREADS) {
+            this.createThread();
         }
     }
 
     @Override
-    public void complete(GeneratorThread thread) throws Exception{
-        this.actual++;
-        if (this.actual < TOTAL) {
-            thread.run();
+    synchronized public void complete(GeneratorThread thread) throws Exception{
+        this.countTaskDone++;
+        this.activeThreads--;
+        if (this.countTaskDone < TOTAL && this.activeThreads < NUM_THREADS) {
+            this.createThread();
         }
-        System.out.println("Thread ended, actual: " + this.actual + " - numThread: " + this.activeThreads);
+        System.out.println("Thread ended, actual: " + this.countTaskDone + " - numThread: " + this.activeThreads);
     }
 }

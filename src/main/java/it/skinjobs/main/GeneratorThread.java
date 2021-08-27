@@ -1,5 +1,5 @@
 package it.skinjobs.main;
-public class GeneratorThread implements Runnable{     
+public class GeneratorThread implements Runnable {     
     
     private Generator generator;
     private ThreadDelegate delegate;
