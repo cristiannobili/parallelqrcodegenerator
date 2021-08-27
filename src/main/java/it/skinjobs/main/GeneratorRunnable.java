@@ -1,11 +1,11 @@
 package it.skinjobs.main;
-public class GeneratorThread implements Runnable {     
+public class GeneratorRunnable implements Runnable {     
     
     private Generator generator;
-    private ThreadDelegate delegate;
+    private CurrentState state;
 
-    public void setDelegate(ThreadDelegate delegate) {
-        this.delegate = delegate;
+    public void setState(CurrentState state) {
+        this.state = state;
     }
 
     public void setGenerator(Generator generator) {
@@ -15,7 +15,8 @@ public class GeneratorThread implements Runnable {
     public void run() {
         generator.generate();
         try {
-            this.delegate.complete(this);
+            this.state.incrementTaskDone();
+            this.state.decrementActiveThreads();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

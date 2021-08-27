@@ -6,41 +6,51 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThreadContainer implements ThreadDelegate{
 
-    private static final int NUM_THREADS = 10;
-    private static final int TOTAL = 1000;
-    private int countTaskDone;
-    private  int activeThreads;
-
+    private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+    private static final int TOTAL = 200;
+    
     @Autowired
 	Generator generator;
 
-    private void createThread() {
-        GeneratorThread runnable = new GeneratorThread();
-        this.activeThreads++;
-        runnable.setGenerator(generator);
-        runnable.setDelegate(this);
-        System.out.println("Thread started, actual: " + this.countTaskDone + " - numThread: " + this.activeThreads);
+    private GeneratorRunnable runnable;
+
+    synchronized private void createThread() {
+      
         //runnable.run();
-        Thread thread = new Thread(runnable);
+        Thread thread = new Thread(this.runnable);
         thread.start();
     }
 
 
     public void runner() throws Exception{
-        this.countTaskDone = 0;
-        this.activeThreads = 0;
-        while ( this.activeThreads < NUM_THREADS) {
-            this.createThread();
+        CurrentState state = new CurrentState();
+        state.setActiveThreads(0);
+        state.setCountTaskDone(0);
+        this.runnable = new GeneratorRunnable();
+        runnable.setGenerator(generator);
+        runnable.setState(state);
+        while (state.getCountTaskDone() < TOTAL) {
+            if (state.getActiveThreads() < NUM_THREADS && 
+                TOTAL - state.getCountTaskDone() > state.getActiveThreads()) {
+                this.createThread();
+                state.incrementActiveThreads();
+            }
+            else {
+                Thread.sleep(1);
+            }
         }
     }
 
     @Override
-    synchronized public void complete(GeneratorThread thread) throws Exception{
-        this.countTaskDone++;
-        this.activeThreads--;
-        if (this.countTaskDone < TOTAL && this.activeThreads < NUM_THREADS) {
-            this.createThread();
+    public void complete(GeneratorRunnable thread) throws Exception{
+        synchronized(this) {
+            // System.out.println(Thread.currentThread().getId() + " " + this.activeThreads);
+            // if (this.countTaskDone < TOTAL && this.activeThreads < NUM_THREADS) {
+            //     this.createThread();
+            // }
+            //System.out.println("Thread ended, actual: " + this.countTaskDone + " - numThread: " + this.activeThreads);
         }
-        System.out.println("Thread ended, actual: " + this.countTaskDone + " - numThread: " + this.activeThreads);
+       
     }
+
 }

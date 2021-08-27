@@ -1,5 +1,5 @@
 package it.skinjobs.main;
 
 public interface ThreadDelegate {
-    void complete(GeneratorThread thread) throws Exception;
+    void complete(GeneratorRunnable thread) throws Exception;
 }
