@@ -6,7 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import it.skinjobs.main.*;
 import it.skinjobs.utils.FileStorageProperties;
@@ -29,8 +28,17 @@ public class ParallelQrCodeGenerator implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		this.names.init();
-		this.threadContainer.runner();
-	} 
+		if (args.length > 0) {
+			try {
+				this.names.init();
+				int numTask = Integer.parseInt(args[0]);
+				this.threadContainer.runner(numTask);
+			} catch(Exception e) {
+				System.out.println("Please insert an integer value");
+			}
+		} else {
+			System.out.println("Usage: \"command number_of_objects\"");
+		}
+	}	
 
 }

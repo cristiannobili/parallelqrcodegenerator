@@ -13,7 +13,6 @@ public class Generator {
 
     public void generate() {
         String fullname = this.names.getRandomName() +" " + this.names.getRandomSurname();
-        //System.out.println(fullname);
         this.qrCodeGenerator.generateCode(fullname);
     }
 }

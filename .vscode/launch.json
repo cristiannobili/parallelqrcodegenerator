@@ -9,7 +9,8 @@
          "type": "java",
          "name": "Launch Java Program",
          "request": "launch",
-         "mainClass": "it.skinjobs.ParallelQrCodeGenerator"
+         "mainClass": "it.skinjobs.ParallelQrCodeGenerator",
+         "args": "200"
       },
    ]
 }
