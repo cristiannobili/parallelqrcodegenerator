@@ -38,3 +38,5 @@ files
 .DS_Store
 *.jar
 .vscode/*
+target/*
+pqrcodegen.jar
